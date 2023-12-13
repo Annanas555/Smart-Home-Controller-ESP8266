@@ -28,21 +28,27 @@ void handleRoot() {
   page += "p { color: #1E88E5; font-size: 1.5em; }";
   page += "button { font-family: 'Roboto', sans-serif; font-size: 1.5em; padding: 10px 20px; margin-top: 20px; background-color: #1E88E5; color: white; }";
   page += "</style></head><body>";
+
   page += "<div style=\"width: 70%; margin: 0 auto;\">";  // Обертка для центрирования
+
+  // DHT
   page += "<h1>Датчик DHT11</h1>";
 
   if (!isnan(temperature) && !isnan(humidity)) {
     page += "<p>Температура: " + String(temperature) + "°C</p>";
     page += "<p>Влажность: " + String(humidity) + "%</p>";
-  } else {
+  }
+  else {
     page += "<p>Ошибка при считывании данных с датчика DHT!</p>";
   }
   page += "<button onclick=\"updateData()\">Обновить</button>";
 
+  // Реле
   page += "<h1>Реле</h1>";
   page += "<p>Статус: " + String(relayState ? "Выключено" : "Включено") + "</p>";
   page += "<button onclick=\"toggleRelay(); updateData();\">" + String(relayState ? "On" : "Off") + "</button>";
   page += "</div>";  // Закрытие обертки
+
   page += "<script>function toggleRelay() { fetch('/toggleRelay').then(response => response.text()).then(data => { document.querySelector('p').innerText = 'Статус: ' + data; document.querySelector('button').innerText = data === 'On' ? 'Off' : 'On'; }); }</script>";
   page += "<script>function updateData() { location.reload(); }</script>";
   page += "</body></html>";
@@ -69,7 +75,8 @@ void setup(void) {
   WiFi.mode(WIFI_STA);
   if (strlen(ssid) == 0) {
     WiFi.begin();
-  } else {
+  }
+  else {
     WiFi.begin(ssid, passPhrase);
   }
 
