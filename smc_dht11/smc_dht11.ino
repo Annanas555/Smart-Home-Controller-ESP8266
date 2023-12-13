@@ -2,8 +2,10 @@
 #include <ESP8266WebServer.h>
 #include <DHT.h>
 
-#define DHTPIN D2
+#define DHTPIN D2// Пин, к которому подключен dht
 #define DHTTYPE DHT11
+
+#define RELAY_PIN D3  // Пин, к которому подключено реле
 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -14,6 +16,8 @@ const char *passPhrase = "PASSWORD"; // Пароль
 
 ESP8266WebServer server(80);
 
+bool relayState = false;
+
 void handleRoot() {
   float temperature = dht.readTemperature();
   float humidity = dht.readHumidity();
@@ -22,7 +26,7 @@ void handleRoot() {
   page += "body { background-color: white; color: #1E88E5; font-family: 'Roboto', sans-serif; text-align: center; }";
   page += "h1 { color: #1E88E5; font-size: 2em; }";
   page += "p { color: #1E88E5; font-size: 1.5em; }";
-  page += "button { background-color: #1E88E5; color: white; font-family: 'Roboto', sans-serif; font-size: 1.5em; padding: 10px 20px; margin-top: 20px; }";
+  page += "button { font-family: 'Roboto', sans-serif; font-size: 1.5em; padding: 10px 20px; margin-top: 20px; background-color: #1E88E5; color: white; }";
   page += "</style></head><body>";
   page += "<div style=\"width: 70%; margin: 0 auto;\">";  // Обертка для центрирования
   page += "<h1>Датчик DHT11</h1>";
@@ -33,9 +37,13 @@ void handleRoot() {
   } else {
     page += "<p>Ошибка при считывании данных с датчика DHT!</p>";
   }
-
   page += "<button onclick=\"updateData()\">Обновить</button>";
+
+  page += "<h1>Реле</h1>";
+  page += "<p>Статус: " + String(relayState ? "Выключено" : "Включено") + "</p>";
+  page += "<button onclick=\"toggleRelay(); updateData();\">" + String(relayState ? "On" : "Off") + "</button>";
   page += "</div>";  // Закрытие обертки
+  page += "<script>function toggleRelay() { fetch('/toggleRelay').then(response => response.text()).then(data => { document.querySelector('p').innerText = 'Статус: ' + data; document.querySelector('button').innerText = data === 'On' ? 'Off' : 'On'; }); }</script>";
   page += "<script>function updateData() { location.reload(); }</script>";
   page += "</body></html>";
 
@@ -43,11 +51,20 @@ void handleRoot() {
   server.send(200, "text/html; charset=utf-8", page);
 }
 
+void handleToggleRelay() {
+  relayState = !relayState;
+  digitalWrite(RELAY_PIN, relayState ? HIGH : LOW);
+  server.send(200, "text/plain", relayState ? "Off" : "On");
+}
+
 void setup(void) {
   delay(3000);
   Serial.begin(115200);
   dht.begin();
   Serial.setDebugOutput(false);
+
+  pinMode(RELAY_PIN, OUTPUT);
+  digitalWrite(RELAY_PIN, LOW);
 
   WiFi.mode(WIFI_STA);
   if (strlen(ssid) == 0) {
@@ -67,6 +84,7 @@ void setup(void) {
   configTime(TIMEZONE, "pool.ntp.org");
 
   server.on("/", HTTP_GET, handleRoot);
+  server.on("/toggleRelay", HTTP_GET, handleToggleRelay);
 
   server.begin();
   Serial.println("Server started.");
@@ -74,8 +92,6 @@ void setup(void) {
 
 void loop(void) {
   server.handleClient();
-
-  delay(2000);  // Задержка между измерениями
 
   float humidity = dht.readHumidity();
   float temperature = dht.readTemperature();
@@ -90,4 +106,6 @@ void loop(void) {
   Serial.print("%\tТемпература: ");
   Serial.print(temperature);
   Serial.println("°C");
+
+  delay(2000);  // Интервал между измерениями и обновлением данных
 }
