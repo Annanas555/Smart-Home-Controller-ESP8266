@@ -18,9 +18,15 @@ void handleRoot() {
   float temperature = dht.readTemperature();
   float humidity = dht.readHumidity();
 
-  String page = "<html><head><meta charset=\"UTF-8\"></head><body>";
+  String page = "<html><head><meta charset=\"UTF-8\"><style>";
+  page += "body { background-color: white; color: #1E88E5; font-family: 'Roboto', sans-serif; text-align: center; }";
+  page += "h1 { color: #1E88E5; font-size: 2em; }";
+  page += "p { color: #1E88E5; font-size: 1.5em; }";
+  page += "button { background-color: #1E88E5; color: white; font-family: 'Roboto', sans-serif; font-size: 1.5em; padding: 10px 20px; margin-top: 20px; }";
+  page += "</style></head><body>";
+  page += "<div style=\"width: 70%; margin: 0 auto;\">";  // Обертка для центрирования
   page += "<h1>Датчик DHT11</h1>";
-  
+
   if (!isnan(temperature) && !isnan(humidity)) {
     page += "<p>Температура: " + String(temperature) + "°C</p>";
     page += "<p>Влажность: " + String(humidity) + "%</p>";
@@ -29,13 +35,13 @@ void handleRoot() {
   }
 
   page += "<button onclick=\"updateData()\">Обновить</button>";
+  page += "</div>";  // Закрытие обертки
   page += "<script>function updateData() { location.reload(); }</script>";
   page += "</body></html>";
 
   server.sendHeader("Content-Length", String(page.length()));
   server.send(200, "text/html; charset=utf-8", page);
 }
-
 
 void setup(void) {
   delay(3000);
