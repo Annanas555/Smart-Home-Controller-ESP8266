@@ -1,18 +1,25 @@
 #include <Arduino.h>
 #include <ESP8266WebServer.h>
 #include <DHT.h>
+#include <NTPClient.h>
+#include <WiFiUdp.h>
+#include <TimeLib.h>
 
-#define DHTPIN D2// Пин, к которому подключен dht
+#define DHTPIN D2  // Пин, к которому подключен dht
 #define DHTTYPE DHT11
 
 #define RELAY_PIN D3  // Пин, к которому подключено реле
 
 DHT dht(DHTPIN, DHTTYPE);
 
-const char *ssid = "SSID"; // Имя сети
-const char *passPhrase = "PASSWORD"; // Пароль
-#define HOSTNAME "192.168.211.119"  // Имя сервера
+const char *ssid = "SSID";            // Имя сети
+const char *passPhrase = "PASSWORD";   // Пароль
+
+#define HOSTNAME "192.168.211.119"     // Имя сервера
 #define TIMEZONE "CET-2CEST,M3.5.0,M10.5.0/3"  // Часовой пояс Москва
+
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org", 10800); // Смещение для московского времени
 
 ESP8266WebServer server(80);
 
@@ -28,10 +35,23 @@ void handleRoot() {
   page += "p { color: #1E88E5; font-size: 1.5em; }";
   page += "button { font-family: 'Roboto', sans-serif; font-size: 1.5em; padding: 10px 20px; margin-top: 20px; background-color: #1E88E5; color: white; }";
   page += "</style></head><body>";
-
   page += "<div style=\"width: 70%; margin: 0 auto;\">";  // Обертка для центрирования
+  
+  // Добавление вывода текущей даты и времени
+  timeClient.update();
 
-  // DHT
+  String formattedTime = timeClient.getFormattedTime();
+  
+  int currentYear = year(timeClient.getEpochTime());
+  int currentMonth = month(timeClient.getEpochTime());
+  int currentDay = day(timeClient.getEpochTime());
+
+  page += "<h1>Текущее время</h1>";
+  page += "<p>" + formattedTime + "</p>";
+  page += "<h1>Текущая дата</h1>";
+  page += "<p>" + String(currentDay) + "." + String(currentMonth) + "." + String(currentYear) + "</p>";
+
+  // DHT11
   page += "<h1>Датчик DHT11</h1>";
 
   if (!isnan(temperature) && !isnan(humidity)) {
