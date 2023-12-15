@@ -12,8 +12,8 @@
 
 DHT dht(DHTPIN, DHTTYPE);
 
-const char *ssid = "SSID";              // Имя сети
-const char *passPhrase = "PASSWORD";   // Пароль
+const char *ssid = "Vivo v21e";              // Имя сети
+const char *passPhrase = "98765432";   // Пароль
 
 #define HOSTNAME "192.168.211.119"     // Имя сервера
 #define TIMEZONE "CET-2CEST,M3.5.0,M10.5.0/3"  // Часовой пояс Москва
@@ -48,8 +48,8 @@ void handleRoot() {
   int currentWeekday = weekday(timeClient.getEpochTime());
 
   // Определение названия дня недели
-  String weekdays[] = {"Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"};
-  String currentWeekdayName = weekdays[currentWeekday];
+  String weekdays[] = {"Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"};
+  String currentWeekdayName = weekdays[currentWeekday-1];
 
   page += "<h1>Текущее время</h1>";
   page += "<p>" + formattedTime + "</p>";
