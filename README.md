@@ -41,12 +41,12 @@ const char *passPhrase = "PASSWORD";   // Пароль
 
 ### Просмотр страницы на ПК
 
-![image](https://github.com/Annanas555/Smart-Home-Controller-ESP8266/assets/128131401/f6c2863b-0839-48bb-9eec-2b9acdab39ac)
+![image](https://github.com/Annanas555/Smart-Home-Controller-ESP8266/assets/128131401/5b6242fb-c353-4f67-9956-3b0dbd61d846)
 
 Для более удобной демонстрации масштаб страницы составляет 90%.
 
 ### Просмотр страницы на мобильном устройстве
 
-![image](https://github.com/Annanas555/Smart-Home-Controller-ESP8266/assets/128131401/c1482a12-2e02-4fe9-9697-eeccecdea376)
+![image](https://github.com/Annanas555/Smart-Home-Controller-ESP8266/assets/128131401/c3a4985a-f902-48de-9ef3-d72cac928a17)
 
 Не стесняйтесь настраивать и расширять этот проект в соответствии с вашими потребностями для умного дома!
