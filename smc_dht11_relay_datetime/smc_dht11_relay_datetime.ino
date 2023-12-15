@@ -12,8 +12,8 @@
 
 DHT dht(DHTPIN, DHTTYPE);
 
-const char *ssid = "Vivo v21e";              // Имя сети
-const char *passPhrase = "98765432";   // Пароль
+const char *ssid = "SSID";              // Имя сети
+const char *passPhrase = "PASSWORD";   // Пароль
 
 #define HOSTNAME "192.168.211.119"     // Имя сервера
 #define TIMEZONE "CET-2CEST,M3.5.0,M10.5.0/3"  // Часовой пояс Москва
