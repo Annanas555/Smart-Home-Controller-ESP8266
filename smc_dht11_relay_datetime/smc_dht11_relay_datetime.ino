@@ -12,7 +12,7 @@
 
 DHT dht(DHTPIN, DHTTYPE);
 
-const char *ssid = "SSID";            // Имя сети
+const char *ssid = "SSID";              // Имя сети
 const char *passPhrase = "PASSWORD";   // Пароль
 
 #define HOSTNAME "192.168.211.119"     // Имя сервера
@@ -30,10 +30,10 @@ void handleRoot() {
   float humidity = dht.readHumidity();
 
   String page = "<html><head><meta charset=\"UTF-8\"><style>";
-  page += "body { background-color: white; color: #1E88E5; font-family: 'Roboto', sans-serif; text-align: center; }";
-  page += "h1 { color: #1E88E5; font-size: 2em; }";
-  page += "p { color: #1E88E5; font-size: 1.5em; }";
-  page += "button { font-family: 'Roboto', sans-serif; font-size: 1.5em; padding: 10px 20px; margin-top: 20px; background-color: #1E88E5; color: white; }";
+  page += "body { background-color: white; color: #1E88E5; font-family: 'Roboto', sans-serif; text-align: center; margin-top: 5%; }";
+  page += "h1 { color: #1E88E5; font-size: 2.5em; }";
+  page += "p { color: #1E88E5; font-size: 2em; }";
+  page += "button { font-family: 'Roboto', sans-serif; font-size: 2em; padding: 15px 30px; margin-top: 20px; background-color: #1E88E5; color: white; }";
   page += "</style></head><body>";
   page += "<div style=\"width: 70%; margin: 0 auto;\">";  // Обертка для центрирования
   
@@ -45,9 +45,18 @@ void handleRoot() {
   int currentYear = year(timeClient.getEpochTime());
   int currentMonth = month(timeClient.getEpochTime());
   int currentDay = day(timeClient.getEpochTime());
+  int currentWeekday = weekday(timeClient.getEpochTime());
+
+  // Определение названия дня недели
+  String weekdays[] = {"Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"};
+  String currentWeekdayName = weekdays[currentWeekday];
 
   page += "<h1>Текущее время</h1>";
   page += "<p>" + formattedTime + "</p>";
+  
+  page += "<h1>Текущий день недели</h1>";
+  page += "<p>" + currentWeekdayName + "</p>";
+
   page += "<h1>Текущая дата</h1>";
   page += "<p>" + String(currentDay) + "." + String(currentMonth) + "." + String(currentYear) + "</p>";
 
