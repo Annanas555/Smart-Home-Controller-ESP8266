@@ -4,6 +4,7 @@
 #include <NTPClient.h>
 #include <WiFiUdp.h>
 #include <TimeLib.h>
+#include <ArduinoJson.h>
 
 #define DHTPIN D2  // Пин, к которому подключен dht
 #define DHTTYPE DHT11
@@ -33,7 +34,6 @@ void handleRoot() {
   page += "body { background-color: white; color: #1E88E5; font-family: 'Roboto', sans-serif; text-align: center; margin-top: 5%; }";
   page += "h1 { color: #1E88E5; font-size: 2.5em; }";
   page += "p { color: #1E88E5; font-size: 2em; }";
-  page += "div#anekdot-container { color: #1E88E5; font-size: 2em; margin: 10px 0; }";
   page += "button { font-family: 'Roboto', sans-serif; font-size: 2em; padding: 15px 30px; margin-top: 20px; background-color: #1E88E5; color: white; }";
   page += "</style></head><body>";
   page += "<div style=\"width: 70%; margin: 0 auto;\">";  // Обертка для центрирования
@@ -78,17 +78,52 @@ void handleRoot() {
   page += "<p>Статус: " + String(relayState ? "Выключено" : "Включено") + "</p>";
   page += "<button onclick=\"toggleRelay(); updateData();\">" + String(relayState ? "On" : "Off") + "</button>";
 
-  // Добавление вывода случайного анекдота
-  page += "<h1>Случайный анекдот</h1>";
-  page += "<div id='anekdot-container'>";
-  page += "<script src=\"https://www.anekdot.ru/rss/randomu.html\" charset=\"utf-8\"></script>";
-  page += "</div>";
+  // Получение курсов валют
+  page += "<h1>Курсы валют</h1>";
+  page += "<p id='usd-rate'></p>";
+  page += "<p id='eur-rate'></p>";
+  page += "<p id='cny-rate'></p>";
+
+  // Получение курсов криптовалют
+  page += "<h1>Курсы криптовалют</h1>";
+  page += "<p id='btc-rate'></p>";
+  page += "<p id='eth-rate'></p>";
 
   page += "</div>";  // Закрытие обертки
-  
+
   // Скрипты
   page += "<script>function toggleRelay() { fetch('/toggleRelay').then(response => response.text()).then(data => { document.querySelector('p').innerText = 'Статус: ' + data; document.querySelector('button').innerText = data === 'On' ? 'Off' : 'On'; }); }</script>";
   page += "<script>function updateData() { location.reload(); }</script>";
+
+  // Получение данных о курсах валют с Open Exchange Rates API
+  page += "<script>";
+  // Доллары
+  page += "fetch('https://open.er-api.com/v6/latest/USD')";
+  page += ".then(response => response.json())";
+  page += ".then(data => { document.getElementById('usd-rate').innerText = 'USD: ' + data.rates.RUB; });";
+  // Евро
+  page += "fetch('https://open.er-api.com/v6/latest/EUR')";
+  page += ".then(response => response.json())";
+  page += ".then(data => { document.getElementById('eur-rate').innerText = 'EUR: ' + data.rates.RUB; });";
+  // Юани
+  page += "fetch('https://open.er-api.com/v6/latest/CNY')";
+  page += ".then(response => response.json())";
+  page += ".then(data => { document.getElementById('cny-rate').innerText = 'CNY: ' + data.rates.RUB; });";
+  page += "</script>";
+
+  // Получение данных о курсах криптовалют с CoinGecko API
+  page += "<script>";
+  // Bitcoin
+  page += "fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')";
+  page += ".then(response => response.json())";
+  page += ".then(data => { document.getElementById('btc-rate').innerText = 'BTC: $' + data.bitcoin.usd; });";
+
+  // Ethereum
+  page += "fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd')";
+  page += ".then(response => response.json())";
+  page += ".then(data => { document.getElementById('eth-rate').innerText = 'ETH: $' + data.ethereum.usd; });";
+  page += "</script>";
+
   page += "</body></html>";
 
   server.sendHeader("Content-Length", String(page.length()));
