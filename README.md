@@ -46,6 +46,7 @@ const char *passPhrase = "PASSWORD";   // Пароль
 
 ### Просмотр страницы на ПК
 
+![Снимок экрана 2023-12-16 190349](https://github.com/Annanas555/Smart-Home-Controller-ESP8266/assets/128131401/c39bdd13-f92f-4a9d-9899-ee53476dc7d1)
 
 Масштаб страницы составляет 100%.
 
